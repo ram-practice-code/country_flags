@@ -8,11 +8,8 @@
                 var country = document.getElementById("flag_details")
                 country.style.display = "block"
                     let back = document.createElement('div')
-                    back.style.height = '45px'
-                    back.style.width = '350px'
-                    back.style.padding = '10px 15px'
-                    back.style.border = "2px solid black"
-                    back.style.borderRadius = "5px"
+                    back.className = "back_button"
+                    back.onclick = () => {country.style.display = 'none' ; window.location.reload()}
                     let back_text = document.createElement('h3')
                     back_text.innerHTML = "Back"
                     back.appendChild(back_text)
@@ -31,11 +28,14 @@
                                 r_div.style.marginLeft = '5%'
                                 let h2 = document.createElement('h2')
                                 h2.innerHTML = nation.name
+                                h2.style.marginBottom = '10%'
+                                r_div.appendChild(h2)
                                     let r_content = document.createElement('div')
                                     r_content.className = "row"
                                         l_content = document.createElement('div')
+                                        l_content.style.width = '350px'
                                         let l_p = document.createElement('p')
-                                        l_p.innerHTML = "Native Name: " + nation.native_name
+                                        l_p.innerHTML = "Native Name: " + nation.nativeName
                                         let l_h1 = document.createElement('h1')
                                         l_h1.innerHTML = "Population: " + nation.population
                                         let l_h2 = document.createElement('h2')
@@ -50,24 +50,24 @@
                                         l_content.appendChild(l_h3)
                                         l_content.appendChild(l_h4)
                                         rr_content = document.createElement('div')
+                                        rr_content.style.width = '350px'
                                         let rr_p = document.createElement('p')
-                                        rr_p.innerHTML = "Native Name: " + nation.top_level_domain
+                                        rr_p.innerHTML = nation.topLevelDomain && nation.topLevelDomain.length > 0 ? "Top Level Domain: " + nation.topLevelDomain[0] : 'None'
                                         let rr_h3 = document.createElement('h3')
-                                        rr_h3.innerHTML = "Sub Region: " + nation.currencies
+                                        rr_h3.innerHTML = nation.currencies && nation.currencies.length > 0 ? "Sub Region: " + nation.currencies.map(item=>item.name).join(',') : 'None'
                                         let rr_h4 = document.createElement('h4')
-                                        rr_h4.innerHTML = "Border Capital: " + nation.languages
+                                        rr_h4.innerHTML = nation.languages && nation.languages.length > 0 ? "Languages: " + nation.languages.map(item=>item.name).join(',') : 'None'
                                         rr_content.appendChild(rr_p)
                                         rr_content.appendChild(rr_h3)
                                         rr_content.appendChild(rr_h4)
                                     r_content.appendChild(l_content)
                                     r_content.appendChild(rr_content)
                                 r_div.appendChild(r_content)
-                                r_div.appendChild(h2)
                             details.appendChild(d_img)
                             details.appendChild(r_div)
                         details_wrap.appendChild(details)
-                country.appendChild(details_wrap)
                 country.appendChild(back)
+                country.appendChild(details_wrap)
 
             }
             function modifyCountries(response){
@@ -142,7 +142,7 @@
             </div>
         </div>
     </header>
-    <section style="margin: 10px 20px" class="row search">
+    <section class="row search">
         <div class="i_wrap">
             <img onclick="fetchCountries('all',document.getElementById('search').value)" src="/design/search_icon.png" alt="search_icon"></img>
             <input id="search" type="search" name="country" placeholder="Search for a country . . ."></input>
