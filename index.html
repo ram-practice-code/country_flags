@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="style.css"></link>
+        <script>
+            let view = (nation) =>{
+                document.getElementById("results").style.display = 'none'
+                var country = document.getElementById("flag_details")
+                country.style.display = "block"
+                    let back = document.createElement('div')
+                    back.style.height = '45px'
+                    back.style.width = '350px'
+                    back.style.padding = '10px 15px'
+                    back.style.border = "2px solid black"
+                    back.style.borderRadius = "5px"
+                    let back_text = document.createElement('h3')
+                    back_text.innerHTML = "Back"
+                    back.appendChild(back_text)
+                        let details_wrap = document.createElement('div')
+                        details_wrap.style.display = "flex"
+                        details_wrap.style.alignItems = "center"
+                        details_wrap.style.justifyContent = "start"
+                            let details = document.createElement('div')
+                            details.className = "row"
+                                let d_img = document.createElement('img')
+                                d_img.src = nation.flag
+                                d_img.style.height = '250px'
+                                d_img.style.width = '350px'
+                                d_img.style.margin = '2% 10%'
+                                let r_div = document.createElement('div')
+                                r_div.style.marginLeft = '5%'
+                                let h2 = document.createElement('h2')
+                                h2.innerHTML = nation.name
+                                    let r_content = document.createElement('div')
+                                    r_content.className = "row"
+                                        l_content = document.createElement('div')
+                                        let l_p = document.createElement('p')
+                                        l_p.innerHTML = "Native Name: " + nation.native_name
+                                        let l_h1 = document.createElement('h1')
+                                        l_h1.innerHTML = "Population: " + nation.population
+                                        let l_h2 = document.createElement('h2')
+                                        l_h2.innerHTML = "Region: " + nation.region
+                                        let l_h3 = document.createElement('h3')
+                                        l_h3.innerHTML = "Sub Region: " + nation.subregion
+                                        let l_h4 = document.createElement('h4')
+                                        l_h4.innerHTML = "Border Capital: " + nation.capital
+                                        l_content.appendChild(l_p)
+                                        l_content.appendChild(l_h1)
+                                        l_content.appendChild(l_h2)
+                                        l_content.appendChild(l_h3)
+                                        l_content.appendChild(l_h4)
+                                        rr_content = document.createElement('div')
+                                        let rr_p = document.createElement('p')
+                                        rr_p.innerHTML = "Native Name: " + nation.top_level_domain
+                                        let rr_h3 = document.createElement('h3')
+                                        rr_h3.innerHTML = "Sub Region: " + nation.currencies
+                                        let rr_h4 = document.createElement('h4')
+                                        rr_h4.innerHTML = "Border Capital: " + nation.languages
+                                        rr_content.appendChild(rr_p)
+                                        rr_content.appendChild(rr_h3)
+                                        rr_content.appendChild(rr_h4)
+                                    r_content.appendChild(l_content)
+                                    r_content.appendChild(rr_content)
+                                r_div.appendChild(r_content)
+                                r_div.appendChild(h2)
+                            details.appendChild(d_img)
+                            details.appendChild(r_div)
+                        details_wrap.appendChild(details)
+                country.appendChild(details_wrap)
+                country.appendChild(back)
+
+            }
+            function modifyCountries(response){
+                var countries_list = document.getElementById('results');
+                    // let count = document.createElement('h3')
+                    // count.innerHTML = response.length
+                    // countries_list.appendChild(count)
+                    countries_list.style.display = 'flex'
+                    countries_list.style.alignItems = 'center'
+                    countries_list.style.justifyContent = 'space-between'
+                    countries_list.style.flexWrap = "wrap"
+                    for (let i = 0; i < response.length; i++) {
+                        let cdiv = document.createElement('div');
+                        cdiv.className = "flag"
+                        let img = document.createElement('img')
+                        img.src = response[i].flag
+                        let bdiv = document.createElement('div')
+                        bdiv.className = "flag_content"
+                        let h4 = document.createElement('h4');
+                        h4.innerHTML = response[i].name;   
+                        let h5 = document.createElement('h5');
+                        h5.innerHTML = "Population: " + response[i].population; 
+                        let h6 = document.createElement('h6');
+                        h6.innerHTML = "Region: " + response[i].region; 
+                        let p = document.createElement('p');
+                        p.innerHTML = "Capital: " + response[i].capital; 
+                        cdiv.appendChild(img);
+                        bdiv.appendChild(h4);
+                        bdiv.appendChild(h5);
+                        bdiv.appendChild(h6);
+                        bdiv.appendChild(p);
+                        cdiv.appendChild(bdiv)
+                        cdiv.onclick = () => view(response[i])
+                        countries_list.appendChild(cdiv);                                 
+                    }
+            }
+            function fetchCountries(region, country){
+                let request = new XMLHttpRequest();    
+                request.responseType = "json";
+                request.open("GET", "data.json", true);
+                request.onload = (data) =>{
+                    console.log(data.target.response , 'data');
+                    var response = data.target.response || []
+                    if(region === "all" && country === "all"){
+                        document.getElementById("results").innerHTML = ""
+                        response = data.target.response
+                        modifyCountries(response)
+                    }else if(region !== "all" && country === "all"){
+                        document.getElementById("results").innerHTML = ""
+                        console.log(region,country,'filtering region')
+                        filtered_region_countries = data.target.response.filter(item=>item.region === region)
+                        console.log(filtered_region_countries,'after filtering')
+                        modifyCountries(filtered_region_countries)
+                    } else if(region === "all" && country !== "all"){
+                        document.getElementById("results").innerHTML = ""
+                        selected_country = data.target.response.filter(item => item.name === country)
+                        modifyCountries(selected_country)
+                    }
+                }
+                request.send();
+            }
+        </script>
+    </head>
+<body onload="fetchCountries('all','all')">
+
+    <header>
+        <div class="navbar">
+            <h2>Where in the World?</h2>
+            <div class="row">
+                <img style="height: 20px;width : 20px;margin-right: 10px;" src="/design/dark_moon.png" alt="mode_icon"></img>
+                <h4>Dark Mode</h4>
+            </div>
+        </div>
+    </header>
+    <section style="margin: 10px 20px" class="row search">
+        <div class="i_wrap">
+            <img onclick="fetchCountries('all',document.getElementById('search').value)" src="/design/search_icon.png" alt="search_icon"></img>
+            <input id="search" type="search" name="country" placeholder="Search for a country . . ."></input>
+        </div>
+        <select onchange="fetchCountries(document.getElementById('region').value,'all')" name="region" id="region">
+            <option id="" value="">Filter by Region</option>
+            <option id="" value="Africa">Africa</option>
+            <option id="" value="Americas">America</option>
+            <option id="" value="Asia">Asia</option>
+            <option id="" value="Europe">Europe</option>
+            <option id="" value="Oceania">Oceania</option>
+        </select>
+    </section>
+    <section id="results" class="results">
+        <!-- country is created in script tag -->
+    </section>
+    <div style="display: none;" id="flag_details">
+    </div>
+</body>
+</html>
